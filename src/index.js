@@ -53,6 +53,7 @@ function renderImages(images) {
         return `<a class="gallery__item" href="${largeImageURL}">
         <div class="photo-card">
       <img src="${webformatURL}" alt="${tags}" loading="lazy" class="gallery__image" />
+      </a>
       <div class="info">
         <p class="info-item">
           <b>Likes:${likes}</b>
@@ -67,7 +68,7 @@ function renderImages(images) {
           <b>Downloads:${downloads}</b>
         </p>
       </div>
-    </div></a>`;
+    </div>`;
       }
     )
     .join(``);
