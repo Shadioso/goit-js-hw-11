@@ -33,6 +33,7 @@ const searchImages = evt => {
         return;
       }
       imageGallary.insertAdjacentHTML(`beforeend`, renderImages(image.hits));
+      lightbox.refresh();
       //   console.log(image.hits);
     })
     .catch(error => console.log(`Oops!Something went wrong: ${error}`));
@@ -50,22 +51,23 @@ function renderImages(images) {
         comments,
         downloads,
       }) => {
-        return `<a class="gallery__item" href="${largeImageURL}">
+        return `
         <div class="photo-card">
+        <a class="gallery__item" href="${largeImageURL}">
       <img src="${webformatURL}" alt="${tags}" loading="lazy" class="gallery__image" />
       </a>
       <div class="info">
         <p class="info-item">
-          <b>Likes:${likes}</b>
+          <b>Likes<br>${likes}</br></b>
         </p>
         <p class="info-item">
-          <b>Views:${views}</b>
+          <b>Views<br>${views}</br></b>
         </p>
         <p class="info-item">
-          <b>Comments:${comments}</b>
+          <b>Comments<br>${comments}</br></b>
         </p>
         <p class="info-item">
-          <b>Downloads:${downloads}</b>
+          <b>Downloads<br>${downloads}</br></b>
         </p>
       </div>
     </div>`;
@@ -76,7 +78,40 @@ function renderImages(images) {
 }
 form.addEventListener(`submit`, searchImages);
 //
-const lightbox = new SimpleLightbox('.gallery a', {
+let lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 250,
 });
+
+// .map(
+//   ({
+//     webformatURL,
+//     largeImageURL,
+//     tags,
+//     likes,
+//     views,
+//     comments,
+//     downloads,
+//   }) => {
+//     return `<a class="gallery__item" href="${largeImageURL}">
+//     <div class="photo-card">
+//   <img src="${webformatURL}" alt="${tags}" loading="lazy" class="gallery__image" />
+//   </a>
+//   <div class="info">
+//     <p class="info-item">
+//       <b>Likes<br>${likes}</br></b>
+//     </p>
+//     <p class="info-item">
+//       <b>Views<br>${views}</br></b>
+//     </p>
+//     <p class="info-item">
+//       <b>Comments<br>${comments}</br></b>
+//     </p>
+//     <p class="info-item">
+//       <b>Downloads<br>${downloads}</br></b>
+//     </p>
+//   </div>
+// </div>`;
+//   }
+// )
+// .join(``);
