@@ -1,14 +1,30 @@
 import { fetchImages } from './fetch_images';
+import { renderImages } from './renderImg';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 //
+const loadMoreBtn = document.querySelector(`#load-more`);
+const axios = require('axios');
 const form = document.querySelector(`#search-form`);
 const button = document.querySelector(`.search-button`);
 const imageGallary = document.querySelector(`.gallery`);
 let searchImage = ``;
-//
-const searchImages = evt => {
+let page = 1;
+
+const loadMoreImg = async e => {
+  e.preventDefault();
+  page += 1;
+  try {
+    const result = await fetchImages(searchImage, page);
+    imageGallary.insertAdjacentHTML(`beforeend`, renderImages(result.hits));
+    lightbox.refresh();
+  } catch (error) {
+    console.log(`ERROR!`);
+  }
+};
+
+const searchImages = async evt => {
   evt.preventDefault();
   imageGallary.innerHTML = ``;
   const input = document.querySelector(`.input-form`);
@@ -23,95 +39,32 @@ const searchImages = evt => {
     );
     return;
   }
-
-  fetchImages(searchImage)
-    .then(image => {
-      if (image.hits.length === 0) {
-        Notiflix.Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-        return;
-      }
-      imageGallary.insertAdjacentHTML(`beforeend`, renderImages(image.hits));
-      lightbox.refresh();
-      //   console.log(image.hits);
-    })
-    .catch(error => console.log(`Oops!Something went wrong: ${error}`));
+  try {
+    page = 1;
+    loadMoreBtn.classList.add(`is-hidden`);
+    const result = await fetchImages(searchImage, page);
+    if (result.hits.length === 0) {
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+      return;
+    }
+    imageGallary.insertAdjacentHTML(`beforeend`, renderImages(result.hits));
+    lightbox.refresh();
+    if (page === 1) {
+      loadMoreBtn.classList.remove(`is-hidden`);
+      loadMoreBtn.addEventListener(`click`, loadMoreImg);
+    } else if (page === 0) {
+      loadMoreBtn.classList.add(`is-hidden`);
+    }
+  } catch (error) {
+    console.log(`Oops!Something went wrong: ${error}`);
+  }
 };
-
-function renderImages(images) {
-  const readyGallery = images
-    .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) => {
-        return `
-        <div class="photo-card">
-        <a class="gallery__item" href="${largeImageURL}">
-      <img src="${webformatURL}" alt="${tags}" loading="lazy" class="gallery__image" />
-      </a>
-      <div class="info">
-        <p class="info-item">
-          <b>Likes<br>${likes}</br></b>
-        </p>
-        <p class="info-item">
-          <b>Views<br>${views}</br></b>
-        </p>
-        <p class="info-item">
-          <b>Comments<br>${comments}</br></b>
-        </p>
-        <p class="info-item">
-          <b>Downloads<br>${downloads}</br></b>
-        </p>
-      </div>
-    </div>`;
-      }
-    )
-    .join(``);
-  return readyGallery;
-}
+//
 form.addEventListener(`submit`, searchImages);
 //
 let lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 250,
 });
-
-// .map(
-//   ({
-//     webformatURL,
-//     largeImageURL,
-//     tags,
-//     likes,
-//     views,
-//     comments,
-//     downloads,
-//   }) => {
-//     return `<a class="gallery__item" href="${largeImageURL}">
-//     <div class="photo-card">
-//   <img src="${webformatURL}" alt="${tags}" loading="lazy" class="gallery__image" />
-//   </a>
-//   <div class="info">
-//     <p class="info-item">
-//       <b>Likes<br>${likes}</br></b>
-//     </p>
-//     <p class="info-item">
-//       <b>Views<br>${views}</br></b>
-//     </p>
-//     <p class="info-item">
-//       <b>Comments<br>${comments}</br></b>
-//     </p>
-//     <p class="info-item">
-//       <b>Downloads<br>${downloads}</br></b>
-//     </p>
-//   </div>
-// </div>`;
-//   }
-// )
-// .join(``);
