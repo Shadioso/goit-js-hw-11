@@ -60,6 +60,7 @@ const searchImages = async evt => {
       return;
     }
     Notiflix.Notify.success(`Hooray! We found ${result.totalHits} images.`);
+    loadMoreBtn.disabled = false;
     imageGallary.insertAdjacentHTML(`beforeend`, renderImages(result.hits));
     lightbox.refresh();
     if (page === 1) {

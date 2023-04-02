@@ -98,8 +98,6 @@
 .load-more {
   width: 150px;
   height: 40px;
-  margin-left: 595px;
-  margin-right: 50%;
 }
 
 .load-more:hover {
@@ -113,4 +111,9 @@
 
 .load-more.is-hidden {
   display: none;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
 }
